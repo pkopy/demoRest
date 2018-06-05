@@ -10,4 +10,5 @@ import java.util.List;
 public interface BookRepository extends CrudRepository<BookEntity, Integer> {
     boolean existsByTitle(String title);
     boolean existsById(int id);
+
 }

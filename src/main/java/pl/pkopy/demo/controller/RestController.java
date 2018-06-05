@@ -25,13 +25,26 @@ public class RestController {
     }
 
 
-    @GetMapping(value = "/rest/{id}", produces = "application/json")
-    public ResponseEntity getBook(@PathVariable("id") int id){
+//    @GetMapping(value = "/rest/{id}", produces = "application/json")
+//    public ResponseEntity getBook(@PathVariable("id") int id){
+//
+//        Optional<BookEntity> bookEntity = bookRepository.findById(id);
+//
+//
+//        return bookEntity.map(ResponseEntity::ok).orElseGet(() -> ResponseEntity.status(HttpStatus.NOT_FOUND).build());
+//
+////        Iterable<BookEntity> bookEntity = bookRepository.findAll();
+////
+////        return ResponseEntity.ok(bookEntity);
+//
+//    }
 
-        Optional<BookEntity> bookEntity = bookRepository.findById(id);
+    @GetMapping(value = "/rest/{title}", produces = "application/json")
+    public ResponseEntity getBookByTittle(@PathVariable("title") String title){
 
 
-        return bookEntity.map(ResponseEntity::ok).orElseGet(() -> ResponseEntity.status(HttpStatus.NOT_FOUND).build());
+
+        return ResponseEntity.ok(bookRepository.existsByTitle(title));
 
 //        Iterable<BookEntity> bookEntity = bookRepository.findAll();
 //
@@ -64,12 +77,19 @@ public class RestController {
 
 
     @DeleteMapping(value = "/rest/{id}")
-    public ResponseEntity deleteById(@PathVariable("id") int id){
+    public ResponseEntity deleteById(@RequestHeader("key") String key, @PathVariable("id") int id){
+
+        if(checkKey(key)){
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
+        }
         bookRepository.deleteById(id);
         return ResponseEntity.ok().build();
     }
     @PutMapping(value = "/rest", consumes = "application/json")
-    public ResponseEntity editBook(@RequestBody BookEntity bookEntity){
+    public ResponseEntity editBook(@RequestHeader("key") String key, @RequestBody BookEntity bookEntity){
+        if(checkKey(key)){
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
+        }
         if(!bookRepository.existsById(bookEntity.getId())){
             return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
         }
