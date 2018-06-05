@@ -4,6 +4,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import pl.pkopy.demo.model.BookEntity;
 import pl.pkopy.demo.model.Config;
@@ -17,6 +18,11 @@ public class RestController {
 
     @Autowired
     BookRepository bookRepository;
+
+    @GetMapping("/")
+    public String index(){
+        return "index";
+    }
 
 
     @GetMapping(value = "/rest/{id}", produces = "application/json")
@@ -38,6 +44,8 @@ public class RestController {
         return ResponseEntity.ok(bookRepository.findAll());
     }
 
+
+
     @PostMapping(value = "/rest", consumes = "application/json")
     public ResponseEntity createBook(@RequestHeader("key") String key,@RequestBody BookEntity bookEntity) {
 
@@ -52,6 +60,8 @@ public class RestController {
         bookRepository.save(bookEntity);
         return ResponseEntity.ok().build();
     }
+
+
 
     @DeleteMapping(value = "/rest/{id}")
     public ResponseEntity deleteById(@PathVariable("id") int id){
